@@ -26,10 +26,13 @@ def split_pdf(pdf_file):
 
         print(f"New PDF file with second half saved as {new_pdf_file}")
         name = pdf_file
+        print("1.pdf file name : ",name)
+
         # Remove the original PDF
         print(f"Removing original PDF file {pdf_file}")
         os.remove(pdf_file)
         pdf_file = name
+        print("2.pdf file name : ",name)
         # Renaming new PDF correctly
         new_pdf_filename = f"half_{os.path.basename(pdf_file)}"
         if os.path.exists(new_pdf_filename):
