@@ -29,7 +29,13 @@ def split_pdf(pdf_file):
         # Remove the original PDF
         print(f"Removing original PDF file {pdf_file}")
         os.remove(pdf_file)
-        pdf_file =  pdf_file.replace(".","- Part-2.") in pdf_file if '.' in pdf_file else f"{pdf_file}- Part - 2"
+        
+        if '.' in pdf_file:
+            pdf_file = pdf_file.replace(".", "- Part-2.", 1)
+        else:
+            pdf_file = f"{pdf_file}- Part - 2"
+            
+            
         # Rename the new PDF to the original filename
         print(f"Renaming {new_pdf_file} to {pdf_file}")
         os.rename(new_pdf_file, pdf_file)
