@@ -92,12 +92,22 @@ def check_and_refresh_token(MONGO_URI,pickle_file_name):
 def upload_large_file(file_path,MONGO_URI,pickle_file_name, chunk_size=50 * 1024 * 1024):
     """Upload a large file to Google Drive."""
     try:
-
+        
         print(f"Preparing to upload file: {file_path}/{pickle_file_name}")
         if not os.path.exists(file_path):
             print(f"File not found: {file_path}")
             return None
-
+        
+        temp_file_path  = file_path.replace(".","- Part-2.")
+        
+        try:
+            os.rename(file_path,temp_file_path)
+            
+            file_path = temp_file_path
+            print(f"renamed sucessfully {file_path} to {temp_file_path}")
+        except Exception as e:
+            print("Error e : ",e)
+        
         creds = check_and_refresh_token(MONGO_URI,pickle_file_name)
         if not creds:
             print("Token refresh failed. Cannot upload file.")
