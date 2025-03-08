@@ -29,9 +29,12 @@ def split_pdf(pdf_file):
         # Remove the original PDF
         print(f"Removing original PDF file {pdf_file}")
         os.remove(pdf_file)
-        # Rename the new PDF to the original filename
-        print(f"Renaming {new_pdf_file} to {pdf_file}")
-        os.rename(new_pdf_file, pdf_file)
+
+        # Renaming new PDF correctly
+        new_pdf_filename = f"half_{os.path.basename(pdf_file)}"
+        if os.path.exists(new_pdf_filename):
+            print(f"Renaming {new_pdf_filename} to {pdf_file}")
+            os.rename(new_pdf_filename, pdf_file)  # Rename to the original filename
 
         doc1 = fitz.open(pdf_file)
         le = len(doc1)
