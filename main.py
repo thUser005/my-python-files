@@ -83,7 +83,6 @@ def main(MONGO_URL, pickle_file_name,start,end):
         pdf_folder = "pdf_images"
         srt_file = "srt_files/subtitles.ass"
         output_video_file = f"{os.path.splitext(pdf_file)[0]}.mp4"
-        final_video_file = f"{os.path.splitext(pdf_file)[0]}_final.mp4"
 
         try:
             print(f"Downloading file: {pdf_file}")
@@ -147,16 +146,14 @@ def main(MONGO_URL, pickle_file_name,start,end):
             print("Error during processing:", e)
         finally:
             print("Cleaning up files...")
-            for path in [audio_folder, pdf_folder, srt_file]:
-                if os.path.exists(path) and 'file.pdf' not in path:
-                    try:
-                        if os.path.isdir(path):
-                            shutil.rmtree(path)
-                        else:
-                            os.remove(path)
-                        print(f"Removed {path}")
-                    except Exception as e:
-                        print(f"Error removing {path}:", e)
+            for file in os.listdir():
+                if '.' in file and file.endswith((".pdf",".mp4",".mp3")):
+                    os.remove(file)
+                    print("removed file : ",file)
+                    
+                if '.' not in file and "__" not in file:
+                    shutil.rmtree(file)
+                    print("removed folder : ",file)
 
             print("Removing all files in /drive/trash folder")
 

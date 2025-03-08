@@ -58,30 +58,30 @@ def extract_pdf_images(pdf_path, output_folder, target_size=(800, 1000)):
         print("PDF pages successfully converted to images.")
 
 
-      # Combine the first two pages
-        if total_pages >= 2:
-            img1 = Image.open(image_files[0])
-            img2 = Image.open(image_files[1])
+    #   # Combine the first two pages
+    #     if total_pages >= 2:
+    #         img1 = Image.open(image_files[0])
+    #         img2 = Image.open(image_files[1])
 
-            # Create a new blank image with double the width
-            combined_width = img1.width + img2.width
-            combined_height = max(img1.height, img2.height)
+    #         # Create a new blank image with double the width
+    #         combined_width = img1.width + img2.width
+    #         combined_height = max(img1.height, img2.height)
 
-            combined_img = Image.new("RGB", (combined_width, combined_height), (255, 255, 255))
-            combined_img.paste(img1, (0, 0))
-            combined_img.paste(img2, (img1.width, 0))
+    #         combined_img = Image.new("RGB", (combined_width, combined_height), (255, 255, 255))
+    #         combined_img.paste(img1, (0, 0))
+    #         combined_img.paste(img2, (img1.width, 0))
 
-            # Reduce size while keeping it under 2MB
-            quality = 95  # Start with high quality
-            save_path = "img.jpg"  # Save as JPEG to control quality
+    #         # Reduce size while keeping it under 2MB
+    #         quality = 95  # Start with high quality
+    #         save_path = "img.jpg"  # Save as JPEG to control quality
 
-            while True:
-                combined_img.save(save_path, "JPEG", quality=quality)
-                if os.path.getsize(save_path) < 2 * 1024 * 1024 or quality <= 10:
-                    break  # Stop when below 2MB or too low quality
-                quality -= 5  # Reduce quality step by step
+    #         while True:
+    #             combined_img.save(save_path, "JPEG", quality=quality)
+    #             if os.path.getsize(save_path) < 2 * 1024 * 1024 or quality <= 10:
+    #                 break  # Stop when below 2MB or too low quality
+    #             quality -= 5  # Reduce quality step by step
 
-            print(f"Combined image '{save_path}' created successfully under 2MB (Quality: {quality}).")
+    #         print(f"Combined image '{save_path}' created successfully under 2MB (Quality: {quality}).")
 
 
         return image_files
@@ -97,7 +97,7 @@ def get_audio_duration(audio_path):
     """Gets the duration of an audio file using pydub and adds 2 extra seconds."""
     audio = AudioSegment.from_file(audio_path)
     duration = len(audio) / 1000  # Convert milliseconds to seconds
-    return duration + 2  # Add 2 extra seconds
+    return duration  # Add 2 extra seconds
 
 
 

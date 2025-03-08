@@ -90,17 +90,18 @@ def extract_text_from_pdf(pdf_path):
                     text = re.sub(rf'\b{word}\b', inappropriate_words[word], text, flags=re.IGNORECASE)
 
             if page_num == 0:
-                text = f"This video presents an audiobook version of the light novel '{pdf_path.split('.pdf')[0]}'"
+                text = f"This video presents an audiobook version of the light novel {pdf_path.replace('.pdf','')}"
 
-            # Special conditions
-            if "copyright" in text.lower() or ".com" in text or (1 <= page_num <= 5):
-                text = "this page seems to be does not read on illustrations or empty page, Audiobook reading does not read on illustrations or empty page"
-                if page_num>3:
-                    text +=   "following platform policies we notify viewrs, when inappropriate words got replaced, For the complete version without content moderation or unsensored,  please join our Telegram channel, where we will post full version in future, "
+            # # Special conditions
+            # if "copyright" in text.lower() or ".com" in text or (1 <= page_num <= 5):
+            #     text = "this page seems to be does not read on illustrations or empty page, Audiobook reading does not read on illustrations or empty page"
+            #     if page_num>3:
+            #         text +=   "following platform policies we notify viewrs, when inappropriate words got replaced, For the complete version without content moderation or unsensored,  please join our Telegram channel, where we will post full version in future, "
 
-            elif page_num <= 5:
-                text = "Page seems to be an image or text not available."
-
+            # elif page_num <= 5:
+            #     text = "Page seems to be an image or text not available."
+            # # special condtions ended
+            
             if not text.strip():
                 text = f"Page {page_num + 1} completed."
 
@@ -136,9 +137,22 @@ import time
 
 
 
-async def text_to_speech(text, output_audio_path, retry_attempts=3):
-    """Converts text to speech using edge-tts and saves as an MP3 file."""
+FALLBACK_AUDIO_PATH = "fallback_audio.mp3"
 
+async def generate_fallback_audio():
+    """Generate a single fallback audio file if it doesn't exist."""
+    if not os.path.exists(FALLBACK_AUDIO_PATH):
+        fallback_text = "This page audio could not be generated, due to technical problem so this page will be skipped,"
+        voice = "en-AU-NatashaNeural"
+        communicate = edge_tts.Communicate(fallback_text, voice)
+        await communicate.save(FALLBACK_AUDIO_PATH)
+
+async def text_to_speech(text, output_audio_path, retry_attempts=3):
+    """Converts text to speech using edge-tts and saves as an MP3 file.
+       Uses a fallback audio file if generation fails."""
+    
+    await generate_fallback_audio()  # Ensure fallback audio exists
+    
     if not text.strip():
         text = "No content available for this page."
 
@@ -165,18 +179,11 @@ async def text_to_speech(text, output_audio_path, retry_attempts=3):
                 print("Retrying after 30 seconds...")
                 time.sleep(30)  # Wait before retrying
             else:
-                print("Max retries reached. Failed to generate TTS.")
+                print("Max retries reached. Using fallback audio.")
 
-    # If we reach here, it means TTS generation failed after all retries
-    # Fallback text: "Text unable to identify"
-    fallback_text = "text unable to identify continuing to next page"
-    communicate = edge_tts.Communicate(fallback_text, voice)
-    await communicate.save(temp_mp3_path)
-
-
-
-# Example usage
-# asyncio.run(text_to_speech("Hello, world!", "output.mp3"))
+    # If all retries fail, use the fallback audio
+    shutil.copy(FALLBACK_AUDIO_PATH, output_audio_path)
+    return output_audio_path
 
 
 def pdf_to_audio(pdf_path, output_folder="audio_pages_01"):
