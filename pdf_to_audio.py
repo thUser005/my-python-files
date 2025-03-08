@@ -89,8 +89,6 @@ def extract_text_from_pdf(pdf_path):
                 if count > 3:
                     text = re.sub(rf'\b{word}\b', inappropriate_words[word], text, flags=re.IGNORECASE)
 
-            if page_num == 0:
-                text = f"This video presents an audiobook version of the light novel {pdf_path.replace('.pdf','')}"
 
             # # Special conditions
             # if "copyright" in text.lower() or ".com" in text or (1 <= page_num <= 5):
@@ -118,6 +116,9 @@ def extract_text_from_pdf(pdf_path):
                 "Your engagement not only motivates us but also ensures that we can continue bringing high-quality content to the community. Thank you for being a valued part of our journey!"
 
             )
+            if page_num == 0:
+                text = f"This video presents an audiobook version of the light novel {pdf_path.replace('.pdf','')}" + text
+
 
             text_pages.append((page_num + 1, text))
         except Exception as e:
