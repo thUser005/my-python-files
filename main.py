@@ -77,7 +77,8 @@ def main(MONGO_URL, pickle_file_name,start,end):
 
         print(f"{30*'-'}\n\nProcessing {index + 1}/{len(url_obj)}...")
         start_time = time.time()
-        pdf_file = obj.get("file_name", "file.pdf")
+        pdf_file = obj.get("serial_num", "file.pdf")
+        pdf_file = f"{pdf_file}.pdf"
         pdf_url = obj.get("link")
         audio_folder = f"audio_pages_{index}"
         pdf_folder = "pdf_images"
